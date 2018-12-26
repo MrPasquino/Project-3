@@ -175,7 +175,26 @@ The deletion of the erroneous data seems to have been done correctly, for the ne
 ### Part d (7 pts)
 
 For each of the variables `grade` and `bedrooms`, calculate the average house price for each unique value of the variable and make a scatterplot for the average house prices v.s. the unique values of the variable; e.g., `grade` takes on the integer values 3 through 13 so your scatterplot for `grade` should have 11 points, the first point should have x-coordinate 3 and y-coordinate the average price for all the houses with `grade` = 3, the second point should have x-coordinate 4 and the y-coordinate the mean price for all the houses with `grade` = 4, and so on.  Please include the origin for the graph for `grade`.  Do the patterns on the two scatterplots look linear?  
+```{r}
+# Create average house price vectors
+prices.grade<-tapply(X=house$price,INDEX=house$grade, FUN=mean)
+prices.bedrooms<-tapply(X=house$price,INDEX=house$bedrooms, FUN=mean)
 
+# Create Plot of Grade
+plot(x=as.numeric(names(prices.grade)),y=prices.grade, main='Grade vs. Average House Price', xlab = 'Grade', ylab = 'Average House Price', xlim=c(0,max(as.numeric(names(prices.grade)))))
+
+# Set Axis Ticks
+axis(side =1,at = c(0:max(as.numeric(names(prices.grade)))))
+
+# Create Plot of Bedrooms
+plot(x=as.numeric(names(prices.bedrooms)),y=prices.bedrooms, main='Number of Bedrooms vs. Average House Price', xlab = 'Number of Bedrooms', ylab = 'Average House Price')
+
+# Set Axis Ticks
+axis(side =1,at = c(0:max(as.numeric(names(prices.bedrooms)))))
+```
+The pattern for the `grade` scatterplot looks like there is an exponential relationship between `grade` and the average `price`.
+
+For the `bedroom` scatterplot, it seems there are two different linear relationships between `bedroom` and the average `price`, one positive linear relationship for the `bedroom` range of [0,8], and a second linear relationship for the `bedroom` range of (8,11].
 
 
 
