@@ -204,22 +204,34 @@ For the `bedroom` scatterplot, it seems there are two different linear relations
 
 Make side by side boxplots to compare the values in `price` by zip code.  Based on your boxplots, is it good to include the dummy variables for some of the zip codes in your model?  Explain.
 
+```{r}
+# Create boxplots
+boxplot(data=house, price~zipcode, las = 2, cex.axis=0.5, xlab='Zipcode', ylab='Price',main='Boxplots of Price by Zipcode')
+```
+James please check this answer.
+
+The boxplots show that some zip codes have far higher house prices than most, notably 98004, 98039, and 98004, but based on these box plots alone we cannot determine whether or not it is good to include zip code dummy variables in the model, for these discrepancies in house prices could be due to confouonding variables. Further analysis is needed to determine whether we should use dummy variables.
 
 ### Part b (8 pts; 1 for each answer, 3 for each interpretation) 
 
 Consider the following model (you will need to remove `eval=F` to run the code below):
 
 
-```{r eval=F}
+```{r}
 summary(lm(price~factor(zipcode), data = house))
 ```
 
 What is the estimate for the y-intercept of the model? Interpret the meaning of the y-intercept.  What is the coefficient estimate for the dummy variable for zip code 98004? interpret this number too.
 
+The estimate of the y-intercept of the model is 281195. The y-intercept merely represents the average price of homes that are in the zipcode that does not have a dummy variable associated with it (This happens to be the zipcode with the lowest number in the datset, 98001). The coefficient estimate for the dummy variable for zipcode 98004 is 1074732. This number is how much the average price of homes in the zipcode 98004 is greater than the estimate of the y-intercept.
 
 ### Part c (4 pts)
 
 The p-value on the third row of the table in the `Coefficients` table is 0.566646.  State the Null hypothesis of the test that this p-value is for.  Does the p-value suggest an inclusion or exclusion of of the dummy variable $1_{zipcode = 98003}$ to the model?
+
+Null Hypoethsis: This dummy variable estimate is equal to 0.
+
+The p-value suggests exclusion of the dummy variable from the model.
 
 
 ### Part d (2 pts) 
@@ -227,6 +239,8 @@ The p-value on the third row of the table in the `Coefficients` table is 0.56664
 Answer TRUE or FALSE only for the following statement (no explanation is required):  
 
 The p-value (56.6665%) in part c above is the estimated chance that the coefficient for the dummy variable for zipcode 98003 is 0; i.e., the p-value is the chance that the Null hypothesis is true. 
+
+False.
 
 
 ### Part e (5 pts) 

@@ -1,0 +1,9 @@
+unnamed-chunk-1	house	read.csv	dim
+unnamed-chunk-2	house	bedrooms	sqft_living	which	bathrooms	library	ggplot2	GGally	ggpairs	c	theme	element_text
+unnamed-chunk-3	dim	house
+unnamed-chunk-4	prices.grade	tapply	house	price	grade	mean	prices.bedrooms	bedrooms	plot	as.numeric	names	c	max	axis
+unnamed-chunk-5	summary	lm	price	factor	zipcode	house
+unnamed-chunk-6	date.format	format	as.Date	mod.variables	date	length	head	dim
+unnamed-chunk-7	test2	mod.variables	date.format	%in%	names	c	dim
+unnamed-chunk-8	tmp	mod.variables	date.format	%in%	names	c	s	dim	set.seed	permu	sample	train	round	test1
+unnamed-chunk-9	predict.reg	form	as.formula	object	call	mat	model.matrix	newdata	coefi	coef	id	xvars	names	%*%
