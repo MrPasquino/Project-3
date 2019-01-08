@@ -209,9 +209,7 @@ Make side by side boxplots to compare the values in `price` by zip code.  Based 
 # Create boxplots
 boxplot(data=house, price~zipcode, las = 2, cex.axis=0.5, xlab='Zipcode', ylab='Price',main='Boxplots of Price by Zipcode')
 ```
-Check answer
-
-Yes, it is good to include the dummy variables for some zip codes for some zip codes seem like they are vastly differnt prices than the majority, indicating that they might have predicting power.
+Yes, it is good to include the dummy variables for some zip codes for `price` seems to have different distributions for different zipcodes.
 
 ### Part b (8 pts; 1 for each answer, 3 for each interpretation) 
 
@@ -396,6 +394,16 @@ In this part please consider only the predictors that already exist in the origi
 
 Use BIC and Adjusted $R^2$ as the criteria to evaluate the performance of your "best" models. Do backward and forward selection algorithms produce similar (in terms of the values for BIC and Adjusted $R^2$) results in this case?  
 
+```{r}
+library("leaps")
+
+train.cullled <- train[, !names(train) %in% c('trans.grade','f.bdrm.less.eq.8')]
+
+model.forward <- regsubsets(price ~ . + sqft_living + sqft_basement + grade + bedroom + bathroom + f.waterfront + f.floor + f.cond + f.renov + f.zipcode, data = train, method = "forward")
+
+model.backward <- regsubsets(price ~ . + sqft_living + sqft_basement + grade + bedroom + bathroom + f.waterfront + f.floor + f.cond + f.renov + f.zipcode, data = train, method = "backward")
+
+```
 
 
 
