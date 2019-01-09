@@ -396,12 +396,12 @@ In this part please consider only the predictors that already exist in the origi
 Use BIC and Adjusted $R^2$ as the criteria to evaluate the performance of your "best" models. Do backward and forward selection algorithms produce similar (in terms of the values for BIC and Adjusted $R^2$) results in this case?  
 
 ```{r}
+train.culled <- train[, !names(train) %in% c('trans.grade','f.bdrm.less.eq.8')]
 
 length(lm(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode, data = train.culled)$coef)
 
 library("leaps")
 
-train.culled <- train[, !names(train) %in% c('trans.grade','f.bdrm.less.eq.8')]
 
 model.forward <- regsubsets(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode, data = train.culled, method = "forward", nvmax = 85)
 
@@ -437,7 +437,23 @@ Pick the results from the better performing algorithm (if both algorithms perfor
 
 As you can see from the graphs creating the right variables helps to improve your model significantly!  
 
+```{r}
+num.var.full <-length(lm(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode + f.bdrm.less.eq.8 + f.waterfront:sqft_living + f.waterfront:bathroom, data = train)$coef)-1
 
+model.forward.full <- regsubsets(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode + f.bdrm.less.eq.8 + f.waterfront:sqft_living + f.waterfront:bathroom, data = train, method = "forward", nvmax = num.var.full)
+
+model.backward.full <- regsubsets(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode + f.bdrm.less.eq.8 + f.waterfront:sqft_living + f.waterfront:bathroom, data = train, method = "backward", nvmax = num.var.full)
+
+par(mfrow=c(2,4))
+plot(summary(model.forward)$bic)
+plot(summary(model.forward)$adjr2)
+plot(summary(model.backward)$bic)
+plot(summary(model.backward)$adjr2)
+plot(summary(model.forward.full)$bic)
+plot(summary(model.forward.full)$adjr2)
+plot(summary(model.backward.full)$bic)
+plot(summary(model.backward.full)$adjr2)
+```
 
 
 
@@ -446,20 +462,39 @@ As you can see from the graphs creating the right variables helps to improve you
 
 What is the purpose of using measures, such as BIC or Adjusted R-square, to evaluate the performance of a model?  Why don't we just use RSS instead?
 
+The purpose of using more advances measures such as BIC and Adjusted R-square is to reduce the chance of overfitting. Both of these measurements penalize the use of too many predictors, which RSS doesn't do.
 
 
 ### Part f (4 pts: 3pts for the choice and 1 for the print out) The champion model
 
 
 Propose your champion model and justify your choice.  Print out the coefficient estimates for your model.
+```{r}
+min(summary(model.backward.full)$bic)
 
+min(summary(model.forward.full)$bic)
+
+which.min(summary(model.backward.full)$bic)
+
+coef(model.backward.full, id = which.min(summary(model.backward.full)$bic))
+```
 
 
 ### Part g (4 pts)
 
 Let $k$ be the number of predictors that you chose for your champion model.  Compare the best models with k predictors selected by the backward and forward algorithms.  Do the algorithms pick the same set of predictors?  Are there any predictors that are selected by the forward algorithm but not by the backward?  List these variables if there are any.  Similarly, are there any predictors that are selected by the backward algorithm but not by the forward?  List the variables too if there are any.
 
+```{r}
+# Establish K
+k = as.numeric(which.min(summary(model.backward.full)$bic))
+k
 
+# Variables in backward model not in forward model
+names(coef(model.backward.full, id = k))[!names(coef(model.backward.full, id = k)) %in% names(coef(model.forward.full, id = k))]
+
+# Variables in forward model not in backword model
+names(coef(model.forward.full, id = k))[!names(coef(model.forward.full, id = k)) %in% names(coef(model.backward.full, id = k))]
+```
  
 ## Question 6 (10 pts) 
 
