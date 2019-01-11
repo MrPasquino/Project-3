@@ -443,7 +443,12 @@ model.forward.full <- regsubsets(price ~ . + f.waterfront + f.floor + f.cond + f
 
 model.backward.full <- regsubsets(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode + f.bdrm.less.eq.8 + f.waterfront:sqft_living + f.waterfront:bathroom, data = train, method = "backward", nvmax = num.var.full)
 
+df.models.full = data.frame(y = c(summary(model.forward.full)$bic,summary(model.backward.full)$bic,summary(model.forward.full)$adjr2,summary(model.backward.full)$adjr2), x = c(rep(1:num.var.full,4)), model.type = c(rep("Full Forward Model Bic", num.var.full),rep("Full Backward Model Bic", num.var.full),rep("Full Forward Model AdjR2", num.var.full),rep("Full Backward Model AdjR2", num.var.full)))
 
+ggplot(df.models.full[df.models.full$model.type=="Full Backward Model Bic" |df.models.full$model.type=="Full Forward Model Bic",]) + geom_point(aes(x=x,y=y, color=model.type, alpha = 0.4)) + geom_point(data = df.models[df.models$model.type=="Backward Model Bic" |df.models$model.type=="Forward Model Bic",], aes(x=x,y=y, color=model.type, alpha = 0.4))
+
+ggplot(df.models.full[df.models.full$model.type=="Full Backward Model AdjR2" |df.models.full$model.type=="Full Forward Model AdjR2",]) + geom_point(aes(x=x,y=y, color=model.type, alpha = 0.4)) + geom_point(data = df.models[df.models$model.type=="Backward Model AdjR2" |df.models$model.type=="Forward Model AdjR2",], aes(x=x,y=y, color=model.type, alpha = 0.4))
+```
 ```
 
 
