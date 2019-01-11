@@ -1,6 +1,6 @@
 ---
 title: "SML 201 Project 3 Predicting House Sold Prices for Seattle and Greater Area"
-author: ''
+author: 'Stuart Duffield and James Armstrong'
 date: "`r Sys.Date()`"
 output:
   pdf_document:
@@ -52,7 +52,7 @@ Please type your name(s) after "Digitally signed:" below the honor pledge to ser
 
 > I pledge my honor that I have not violated the honor code when completing this assignment.
 
-Digitally signed: James Armstrong
+Digitally signed: Stuart Duffield and James Armstrong
 
 ----
 
@@ -105,11 +105,14 @@ We will use the dataset `subset_kc_house_data.csv` and the definitions for the v
 ## Question 1 (1 pt)
 
 Read the dataset `subset_kc_house_data.csv` into `R` and name it `house`. `house` should have 21613 rows and 15 columns.
-
 ```{r}
-house = read.csv("/Users/jamesarmstrong/Desktop/SML 201/subset_kc_house_data.csv")
-```
+#load in dataset as `house`
+house<-read.csv("C:/Users/Stuart/Desktop/Sophomore Year/SML 201/Project 3/subset_kc_house_data.csv")
 
+# Check dimensions
+dim(house)
+```
+`house` has 21613 rows and 15 columns.
 
 
 # Exploring the relationship between `price` and other variables.
@@ -122,25 +125,35 @@ house = read.csv("/Users/jamesarmstrong/Desktop/SML 201/subset_kc_house_data.csv
 Use `ggpairs()` in the `GGally` package and make matrices of scatterplots to investigate the pairwise relationships between the variables;   
 
 Group `sqft_living`, `sqft_lot`, `sqft_above` and `sqft_basement` in the same plot to see if any of these variables are correlated.  In general, it is good to have x-variables that are highly correlated (i.e., with correlation close to -1 or 1) among themselves in your model?  Explain why yes or why no.
+
 ```{r}
 # Check sqare footage of living area of 30+ bedroom house
 house[house$bedrooms>30,]$sqft_living
 
 # Remove erroneous data
 house = house[-which(house$bedrooms==0 & house$bathrooms==0|house$bedrooms>30),]
+
 # Make Plots
 library(ggplot2)
 library(GGally)
-ggpairs(data=house[,c('price','bedrooms','bathrooms','sqft_living', 'sqft_lot','sqft_above', 'sqft_basement')], title = 'Comparison Graph 1', aes(colour = as.factor(house$waterfront))) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
-ggpairs(data=house[,c('price','bedrooms','bathrooms','sqft_living','floors', 'waterfront','condition')], title = 'Comparison Graph 2', aes(colour = as.factor(house$waterfront))) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
-ggpairs(data=house[,c('price','bedrooms','bathrooms','sqft_living','grade','yr_built','yr_renovated')], title = 'Comparison Graph 3', aes(colour = as.factor(house$waterfront))) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
-ggpairs(data=house[,c('price','sqft_lot','sqft_above', 'sqft_basement','floors', 'waterfront','condition')], title = 'Comparison Graph 4', aes(colour = as.factor(house$waterfront))) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
-ggpairs(data=house[,c('price','sqft_lot','sqft_above', 'sqft_basement','grade','yr_built','yr_renovated')], title = 'Comparison Graph 5', aes(colour = as.factor(house$waterfront))) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
-ggpairs(data=house[,c('price','floors', 'waterfront','condition','grade','yr_built','yr_renovated')], title = 'Comparison Graph 6', aes(colour = as.factor(house$waterfront))) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
-ggpairs(data=house[,c("sqft_living", "sqft_lot","sqft_above", "sqft_basement")],title = "Comparisons of Sqft Variables", aes(colour = as.factor(house$waterfront))) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+
+ggpairs(data=house[,c('price','bedrooms','bathrooms','sqft_living', 'sqft_lot','sqft_above', 'sqft_basement')], title = 'Comparison Graph 1', aes(colour = as.factor(house$waterfront), alpha = 0.4)) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+
+ggpairs(data=house[,c('price','bedrooms','bathrooms','sqft_living','floors', 'waterfront','condition')], title = 'Comparison Graph 2', aes(colour = as.factor(house$waterfront), alpha = 0.4)) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+
+ggpairs(data=house[,c('price','bedrooms','bathrooms','sqft_living','grade','yr_built','yr_renovated')], title = 'Comparison Graph 3', aes(colour = as.factor(house$waterfront), alpha = 0.4)) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+
+ggpairs(data=house[,c('price','sqft_lot','sqft_above', 'sqft_basement','floors', 'waterfront','condition')], title = 'Comparison Graph 4', aes(colour = as.factor(house$waterfront), alpha = 0.4)) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+
+ggpairs(data=house[,c('price','sqft_lot','sqft_above', 'sqft_basement','grade','yr_built','yr_renovated')], title = 'Comparison Graph 5', aes(colour = as.factor(house$waterfront), alpha = 0.4)) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+
+ggpairs(data=house[,c('price','floors', 'waterfront','condition','grade','yr_built','yr_renovated')], title = 'Comparison Graph 6', aes(colour = as.factor(house$waterfront), alpha = 0.4)) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+
+
+
+ggpairs(data=house[,c("sqft_living", "sqft_lot","sqft_above", "sqft_basement")],title = "Comparisons of Sqft Variables") + theme(axis.text.x = element_text(angle= 90, hjust= 1))
 ```
-
-
+In the plot of `Sqft Variables`, `sqft_living` and `sqft_above` are highly correlated with an R-squared value of 0.877. In general, it is not good to have two x-variables that are highly correlated in the model for that might lead to explanatory redundancy.
 
 ### Part b (2 pts)
 
@@ -151,6 +164,7 @@ The most desirable single predictor for price is `sqft_living`, for it has the h
 ### Part c (2 pts)
 
 From the scatterplots in Part a we see that there is a house with more than 30 bedrooms; what is the living square footage of this house?  Also, there are 7 houses recorded with 0 bedroom and 0 bathroom but with positive values for the square footage.  All these 8 records are likely to be errors.  Add a chunk of code in Part a before the code for making the matrix scatterplots to remove these 8 observations in `house` and assign the resulting data frame to the same name `house`; this way, your scatterplot matrices will not include these 8 observations. Check the dimension of the new data frame `house` to make sure that the replacement was done correctly.
+
 ```{r}
 # Check dimensions again
 dim(house)
@@ -159,21 +173,23 @@ Looking at Part a, the square footage of the 30+ bedroom house is 1620.
 The deletion of the erroneous data seems to have been done correctly, for the new dimensions of `house` has eight fewer observations than before (21613 to 21605).
 
 
-
 ### Part d (7 pts)
 
 For each of the variables `grade` and `bedrooms`, calculate the average house price for each unique value of the variable and make a scatterplot for the average house prices v.s. the unique values of the variable; e.g., `grade` takes on the integer values 3 through 13 so your scatterplot for `grade` should have 11 points, the first point should have x-coordinate 3 and y-coordinate the average price for all the houses with `grade` = 3, the second point should have x-coordinate 4 and the y-coordinate the mean price for all the houses with `grade` = 4, and so on.  Please include the origin for the graph for `grade`.  Do the patterns on the two scatterplots look linear?  
-
 ```{r}
 # Create average house price vectors
 prices.grade<-tapply(X=house$price,INDEX=house$grade, FUN=mean)
 prices.bedrooms<-tapply(X=house$price,INDEX=house$bedrooms, FUN=mean)
+
 # Create Plot of Grade
 plot(x=as.numeric(names(prices.grade)),y=prices.grade, main='Grade vs. Average House Price', xlab = 'Grade', ylab = 'Average House Price', xlim=c(0,max(as.numeric(names(prices.grade)))))
+
 # Set Axis Ticks
 axis(side =1,at = c(0:max(as.numeric(names(prices.grade)))))
+
 # Create Plot of Bedrooms
 plot(x=as.numeric(names(prices.bedrooms)),y=prices.bedrooms, main='Number of Bedrooms vs. Average House Price', xlab = 'Number of Bedrooms', ylab = 'Average House Price')
+
 # Set Axis Ticks
 axis(side =1,at = c(0:max(as.numeric(names(prices.bedrooms)))))
 ```
@@ -182,11 +198,13 @@ The pattern for the `grade` scatterplot looks like there is an exponential relat
 For the `bedroom` scatterplot, it seems there are two different linear relationships between `bedroom` and the average `price`, one positive linear relationship for the `bedroom` range of [0,8], and a second linear relationship for the `bedroom` range of (8,11].
 
 
+
 ## Question 3 (24 pts) Zipcode variable  
 
 ### Part a (5 pts; 1 for  answer; 2 for explanation) 
 
 Make side by side boxplots to compare the values in `price` by zip code.  Based on your boxplots, is it good to include the dummy variables for some of the zip codes in your model?  Explain.
+
 ```{r}
 # Create boxplots
 boxplot(data=house, price~zipcode, las = 2, cex.axis=0.5, xlab='Zipcode', ylab='Price',main='Boxplots of Price by Zipcode')
@@ -214,6 +232,7 @@ Null Hypoethsis: This dummy variable estimate is equal to 0.
 
 The p-value suggests exclusion of the dummy variable from the model.
 
+
 ### Part d (2 pts) 
 
 Answer TRUE or FALSE only for the following statement (no explanation is required):  
@@ -222,9 +241,11 @@ The p-value (56.6665%) in part c above is the estimated chance that the coeffici
 
 False.
 
+
 ### Part e (5 pts) 
 
 For the model shown in Part b how many of the coefficient estimates are significant (i.e., with p-values less than $\alpha$ = .05)?  Use Bonferroni Correction factor and the method for controlling for False Discovery Rate (FDR) to achieve new cutoffs for the p-values.  For each of the two methods, report the adjusted cutoff for the p-values and the number of coefficient estimates that are with p-values less than the new cutoff.
+
 ```{r}
 # Make vector of p-values
 p.v.zip<-summary(lm(price~factor(zipcode), data = house))$coefficients[,4]
@@ -239,8 +260,7 @@ sort.p.zip<-sort(p.v.zip)
 length(sort.p.zip[sort.p.zip<=((1:length(sort.p.zip)/length(sort.p.zip)))*0.05])
 max(sort.p.zip[sort.p.zip<=((1:length(sort.p.zip)/length(sort.p.zip)))*0.05])
 ```
-
-
+For the Bonferroni Correction Factor, 53 p-values are now significant, with a maximum p-value cutoff of 0.01134761. For the False Discovery Rate, 55 p-values are significant with a new p-value cutoff of 0.01134761. 
 
 
 # Transforming some of the variables and creating additional ones
@@ -267,14 +287,13 @@ log(price) = b \times log(grade)
 \]
 
 Find out what the best value for $b$ should be according to the data; this value should minimize $(log(price_i) - b \times log(grade_i))^2$ for the data points on average.
+
 ```{r}
 log.price <- log(house$price)
 log.grade <- log(house$grade)
-summary(lm(log.price~log.grade-1))$coefficients[1]
+summary(lm(log.price~log.grade-1))
 ```
-
-The best value for 'b' should be 6.2438.
-
+The best value for `b` should be 6.4238
 
 ### Part b (2 pts)
 
@@ -287,8 +306,6 @@ trans.grade = house$grade^summary(lm(log.price~log.grade-1))$coefficients[1]
 # Create Plot of Grade
 plot(x=sort(unique(trans.grade)),y=prices.grade, main='Transformed Grade vs. Average House Price', xlab = 'Transformed Grade', ylab = 'Average House Price', xlim=c(0,max(trans.grade)))
 ```
-
-
 
 ### Part c (3 pts) Creating new variables for the model
 
@@ -306,7 +323,6 @@ We will create the new data frame `mod.variables` with all the transformed varia
 and also the transformed variable
 
 * `trans.grade`: the vector `trans.grade` that you have already made.
-
 ```{r}
 mod.variables<- data.frame(price=house$price,sqft_living=house$sqft_living, sqft_basement=house$sqft_basement, grade=house$grade, bedroom=house$bedroom, bathroom=house$bathroom,date=house$date, f.waterfront=as.factor(house$waterfront),f.floor=as.factor(house$floor),f.cond=as.factor(house$condition),f.renov=as.factor(as.numeric(house$yr_renovated!=0)),f.bdrm.less.eq.8=as.factor(as.numeric(house$bedrooms<=8)),f.zipcode=as.factor(house$zipcode),trans.grade=trans.grade)
 ```
@@ -324,7 +340,6 @@ date.format = format(as.Date(mod.variables$date, '%Y%m%dT'), "%Y%m")
 length(date.format)
 head(date.format)
 dim(mod.variables)
-
 ```
 
 
@@ -380,24 +395,30 @@ In this part please consider only the predictors that already exist in the origi
 Use BIC and Adjusted $R^2$ as the criteria to evaluate the performance of your "best" models. Do backward and forward selection algorithms produce similar (in terms of the values for BIC and Adjusted $R^2$) results in this case?  
 
 ```{r}
-model.length = length(lm(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode - f.bdrm.less.eq.8 - trans.grade, data = train)$coef) - 1
+
+model.length <- length(lm(price~. + f.waterfront + f.floor + f.cond + f.renov + f.zipcode - trans.grade - f.bdrm.less.eq.8, data = train)$coef) -1
 
 library("leaps")
+
 model.forward <- regsubsets(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode - trans.grade - f.bdrm.less.eq.8, data = train, method = "forward", nvmax = model.length)
+
 model.backward <- regsubsets(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode - trans.grade - f.bdrm.less.eq.8, data = train, method = "backward", nvmax = model.length)
 
 df.models <- data.frame(y = c(summary(model.forward)$bic,summary(model.backward)$bic,summary(model.forward)$adjr2,summary(model.backward)$adjr2), x = c(rep(1:model.length,4)), model.type = c(rep("Forward Model Bic",model.length),rep("Backward Model Bic",model.length),rep("Forward Model AdjR2",model.length),rep("Backward Model AdjR2",model.length)))
 
+
 ggplot(df.models[df.models$model.type=="Backward Model Bic" |df.models$model.type=="Forward Model Bic",]) + geom_point(aes(x=x,y=y, color=model.type, alpha = 0.4))
+
 ggplot(df.models[df.models$model.type=="Backward Model AdjR2" |df.models$model.type=="Forward Model AdjR2",]) + geom_point(aes(x=x,y=y, color=model.type, alpha = 0.4))
 ```
-Looking at the summaries and the plot of the summaries for the bic and adjusted R^2 values of the backwards and forwards models, these two methods produce similar results in terms of bic and R^2 values.
+Looking at the plots of the Bic and Adjusted R-squared values of the forward and backward models, there seems to be little difference in terms of either metric between the 'best' models for any given number of predictors.
 
 
 ### Part b (2 pts)
 Print out the coefficient estimates for the best model with 7 predictors for each algorithm; is `f.waterfront1` included in both models?
+
 ```{r}
-coef(model.forward, id = 7)
+coef(model.foward, id = 7)
 coef(model.backward, id = 7)
 ```
 Yes, `f.waterfront1` is included in both models.
@@ -414,19 +435,16 @@ In this part we want to see if including additional variables that are not defin
 Pick the results from the better performing algorithm (if both algorithms perform similarly just pick either one) in part a and add the results to the plots for BIC and Adjusted $R^2$ for the current models too; this will allow you to see how much the performance of each of the best models improves by considering the additional variables.
 
 As you can see from the graphs creating the right variables helps to improve your model significantly!  
+
 ```{r}
 num.var.full <-length(lm(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode + f.bdrm.less.eq.8 + f.waterfront:sqft_living + f.waterfront:bathroom, data = train)$coef)-1
+
 model.forward.full <- regsubsets(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode + f.bdrm.less.eq.8 + f.waterfront:sqft_living + f.waterfront:bathroom, data = train, method = "forward", nvmax = num.var.full)
+
 model.backward.full <- regsubsets(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode + f.bdrm.less.eq.8 + f.waterfront:sqft_living + f.waterfront:bathroom, data = train, method = "backward", nvmax = num.var.full)
-par(mfrow=c(2,4))
 
-df.models.full = data.frame(y = c(summary(model.forward.full)$bic,summary(model.backward.full)$bic,summary(model.forward.full)$adjr2,summary(model.backward.full)$adjr2), x = c(rep(1:num.var.full,4)), model.type = c(rep("Full Forward Model Bic", num.var.full),rep("Full Backward Model Bic", num.var.full),rep("Full Forward Model AdjR2", num.var.full),rep("Full Backward Model AdjR2", num.var.full)))
 
-ggplot(df.models.full[df.models.full$model.type=="Full Backward Model Bic" |df.models.full$model.type=="Full Forward Model Bic",]) + geom_point(aes(x=x,y=y, color=model.type, alpha = 0.4)) + geom_point(data = df.models[df.models$model.type=="Backward Model Bic" |df.models$model.type=="Forward Model Bic",], aes(x=x,y=y, color=model.type, alpha = 0.4))
-ggplot(df.models.full[df.models.full$model.type=="Full Backward Model AdjR2" |df.models.full$model.type=="Full Forward Model AdjR2",]) + geom_point(aes(x=x,y=y, color=model.type, alpha = 0.4)) + geom_point(data = df.models[df.models$model.type=="Backward Model AdjR2" |df.models$model.type=="Forward Model AdjR2",], aes(x=x,y=y, color=model.type, alpha = 0.4))
 ```
-
-
 
 
 
@@ -435,20 +453,39 @@ ggplot(df.models.full[df.models.full$model.type=="Full Backward Model AdjR2" |df
 
 What is the purpose of using measures, such as BIC or Adjusted R-square, to evaluate the performance of a model?  Why don't we just use RSS instead?
 
+The purpose of using more advances measures such as BIC and Adjusted R-square is to reduce the chance of overfitting. Both of these measurements penalize the use of too many predictors, which RSS doesn't do.
 
 
 ### Part f (4 pts: 3pts for the choice and 1 for the print out) The champion model
 
 
 Propose your champion model and justify your choice.  Print out the coefficient estimates for your model.
+```{r}
+min(summary(model.backward.full)$bic)
 
+min(summary(model.forward.full)$bic)
+
+which.min(summary(model.backward.full)$bic)
+
+coef(model.backward.full, id = which.min(summary(model.backward.full)$bic))
+```
 
 
 ### Part g (4 pts)
 
 Let $k$ be the number of predictors that you chose for your champion model.  Compare the best models with k predictors selected by the backward and forward algorithms.  Do the algorithms pick the same set of predictors?  Are there any predictors that are selected by the forward algorithm but not by the backward?  List these variables if there are any.  Similarly, are there any predictors that are selected by the backward algorithm but not by the forward?  List the variables too if there are any.
 
+```{r}
+# Establish K
+k = as.numeric(which.min(summary(model.backward.full)$bic))
+k
 
+# Variables in backward model not in forward model
+names(coef(model.backward.full, id = k))[!names(coef(model.backward.full, id = k)) %in% names(coef(model.forward.full, id = k))]
+
+# Variables in forward model not in backword model
+names(coef(model.forward.full, id = k))[!names(coef(model.forward.full, id = k)) %in% names(coef(model.backward.full, id = k))]
+```
  
 ## Question 6 (10 pts) 
 
