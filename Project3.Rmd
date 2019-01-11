@@ -427,10 +427,6 @@ ggplot(df.models.full[df.models.full$model.type=="Full Backward Model AdjR2" |df
 ```
 
 
-
-
-
-
 ### Part e (2 pt)
 
 What is the purpose of using measures, such as BIC or Adjusted R-square, to evaluate the performance of a model?  Why don't we just use RSS instead?
