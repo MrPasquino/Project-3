@@ -401,9 +401,9 @@ model.length <- length(lm(price~. + f.waterfront + f.floor + f.cond + f.renov + 
 
 library("leaps")
 
-model.forward <- regsubsets(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode, data = train.culled, method = "forward", nvmax = model.length)
+model.forward <- regsubsets(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode - trans.grade - f.bdrm.less.eq.8, data = train, method = "forward", nvmax = model.length)
 
-model.backward <- regsubsets(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode, data = train.culled, method = "backward", nvmax = model.length)
+model.backward <- regsubsets(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode - trans.grade - f.bdrm.less.eq.8, data = train, method = "backward", nvmax = model.length)
 
 df.models <- data.frame(y = c(summary(model.forward)$bic,summary(model.backward)$bic,summary(model.forward)$adjr2,summary(model.backward)$adjr2), x = c(rep(1:model.length,4)), model.type = c(rep("Forward Model Bic",model.length),rep("Backward Model Bic",model.length),rep("Forward Model AdjR2",model.length),rep("Backward Model AdjR2",model.length)))
 
@@ -412,7 +412,7 @@ ggplot(df.models[df.models$model.type=="Backward Model Bic" |df.models$model.typ
 
 ggplot(df.models[df.models$model.type=="Backward Model AdjR2" |df.models$model.type=="Forward Model AdjR2",]) + geom_point(aes(x=x,y=y, color=model.type, alpha = 0.4))
 ```
-Looking at the plots of the Bic and Adjusted R-squared values of 
+Looking at the plots of the Bic and Adjusted R-squared values of the forward and backward models, there seems to be little difference in terms of either metric between the 'best' models for any given number of predictors.
 
 
 ### Part b (2 pts)
