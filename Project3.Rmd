@@ -137,18 +137,17 @@ house = house[-which(house$bedrooms==0 & house$bathrooms==0|house$bedrooms>30),]
 library(ggplot2)
 library(GGally)
 
-ggpairs(data=house[,c('price','bedrooms','bathrooms','sqft_living', 'sqft_lot','sqft_above', 'sqft_basement')], title = 'Comparison Graph 1', aes(colour = as.factor(house$waterfront)))
-        + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+ggpairs(data=house[,c('price','bedrooms','bathrooms','sqft_living', 'sqft_lot','sqft_above', 'sqft_basement')], title = 'Comparison Graph 1', aes(colour = as.factor(house$waterfront), alpha = 0.4)) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
 
-ggpairs(data=house[,c('price','bedrooms','bathrooms','sqft_living','floors', 'waterfront','condition')], title = 'Comparison Graph 2', aes(colour = as.factor(house$waterfront))) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+ggpairs(data=house[,c('price','bedrooms','bathrooms','sqft_living','floors', 'waterfront','condition')], title = 'Comparison Graph 2', aes(colour = as.factor(house$waterfront), alpha = 0.4)) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
 
-ggpairs(data=house[,c('price','bedrooms','bathrooms','sqft_living','grade','yr_built','yr_renovated')], title = 'Comparison Graph 3', aes(colour = as.factor(house$waterfront))) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+ggpairs(data=house[,c('price','bedrooms','bathrooms','sqft_living','grade','yr_built','yr_renovated')], title = 'Comparison Graph 3', aes(colour = as.factor(house$waterfront), alpha = 0.4)) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
 
-ggpairs(data=house[,c('price','sqft_lot','sqft_above', 'sqft_basement','floors', 'waterfront','condition')], title = 'Comparison Graph 4', aes(colour = as.factor(house$waterfront))) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+ggpairs(data=house[,c('price','sqft_lot','sqft_above', 'sqft_basement','floors', 'waterfront','condition')], title = 'Comparison Graph 4', aes(colour = as.factor(house$waterfront), alpha = 0.4)) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
 
-ggpairs(data=house[,c('price','sqft_lot','sqft_above', 'sqft_basement','grade','yr_built','yr_renovated')], title = 'Comparison Graph 5', aes(colour = as.factor(house$waterfront))) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+ggpairs(data=house[,c('price','sqft_lot','sqft_above', 'sqft_basement','grade','yr_built','yr_renovated')], title = 'Comparison Graph 5', aes(colour = as.factor(house$waterfront), alpha = 0.4)) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
 
-ggpairs(data=house[,c('price','floors', 'waterfront','condition','grade','yr_built','yr_renovated')], title = 'Comparison Graph 6', aes(colour = as.factor(house$waterfront))) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+ggpairs(data=house[,c('price','floors', 'waterfront','condition','grade','yr_built','yr_renovated')], title = 'Comparison Graph 6', aes(colour = as.factor(house$waterfront), alpha = 0.4)) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
 
 
 
@@ -444,15 +443,7 @@ model.forward.full <- regsubsets(price ~ . + f.waterfront + f.floor + f.cond + f
 
 model.backward.full <- regsubsets(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode + f.bdrm.less.eq.8 + f.waterfront:sqft_living + f.waterfront:bathroom, data = train, method = "backward", nvmax = num.var.full)
 
-par(mfrow=c(2,4))
-plot(summary(model.forward)$bic)
-plot(summary(model.forward)$adjr2)
-plot(summary(model.backward)$bic)
-plot(summary(model.backward)$adjr2)
-plot(summary(model.forward.full)$bic)
-plot(summary(model.forward.full)$adjr2)
-plot(summary(model.backward.full)$bic)
-plot(summary(model.backward.full)$adjr2)
+
 ```
 
 
