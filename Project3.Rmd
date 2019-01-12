@@ -324,7 +324,20 @@ and also the transformed variable
 
 * `trans.grade`: the vector `trans.grade` that you have already made.
 ```{r}
-mod.variables<- data.frame(price=house$price,sqft_living=house$sqft_living, sqft_basement=house$sqft_basement, grade=house$grade, bedroom=house$bedroom, bathroom=house$bathroom,date=house$date, f.waterfront=as.factor(house$waterfront),f.floor=as.factor(house$floor),f.cond=as.factor(house$condition),f.renov=as.factor(as.numeric(house$yr_renovated!=0)),f.bdrm.less.eq.8=as.factor(as.numeric(house$bedrooms<=8)),f.zipcode=as.factor(house$zipcode),trans.grade=trans.grade)
+# Create new dataframe `mod.variables`
+mod.variables<- data.frame(
+  price=house$price,
+  sqft_living=house$sqft_living, 
+  sqft_basement=house$sqft_basement, 
+  grade=house$grade, bedroom=house$bedroom, 
+  bathroom=house$bathroom,date=house$date,
+  f.waterfront=as.factor(house$waterfront),
+  f.floor=as.factor(house$floor),
+  f.cond=as.factor(house$condition),
+  f.renov=as.factor(as.numeric(house$yr_renovated!=0)),
+  f.bdrm.less.eq.8=as.factor(as.numeric(house$bedrooms<=8)),
+  f.zipcode=as.factor(house$zipcode),
+  trans.grade=trans.grade)
 ```
 
 
@@ -336,6 +349,7 @@ For this part you just need to remove the `eval=F` argument for each of the code
 `mod.variables` covers the period from May 2014 to May 2015.  We will prepare a vector `date.format` that we can use to extract out the observations that correspond to transactions closed in May 2015.
 
 ```{r}
+# Prepare date vector
 date.format = format(as.Date(mod.variables$date, '%Y%m%dT'), "%Y%m")
 length(date.format)
 head(date.format)
@@ -347,9 +361,10 @@ dim(mod.variables)
 Then, the following lines will extract out all the observations with transactions closed in May 2015. We will use these observations for our out-of-time test set `test2`.  `test2` should be 646 by 13. 
 
 ```{r}
-
+# Create out of time test set
 test2 = mod.variables[date.format %in% '201505', !(names(mod.variables)%in%c('date'))]
 
+# Check dimensions
 dim(test2)
 ```
 
@@ -437,11 +452,11 @@ Pick the results from the better performing algorithm (if both algorithms perfor
 As you can see from the graphs creating the right variables helps to improve your model significantly!  
 
 ```{r}
-num.var.full <-length(lm(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode + f.bdrm.less.eq.8 + f.waterfront:sqft_living + f.waterfront:bathroom, data = train)$coef)-1
+num.var.full <-length(lm(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode + f.bdrm.less.eq.8 + f.waterfront:sqft_living + f.waterfront:bathroom + f.bdrm.less.eq.8:bedroom, data = train)$coef)-1
 
-model.forward.full <- regsubsets(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode + f.bdrm.less.eq.8 + f.waterfront:sqft_living + f.waterfront:bathroom, data = train, method = "forward", nvmax = num.var.full)
+model.forward.full <- regsubsets(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode + f.bdrm.less.eq.8 + f.waterfront:sqft_living + f.waterfront:bathroom + f.bdrm.less.eq.8:bedroom, data = train, method = "forward", nvmax = num.var.full)
 
-model.backward.full <- regsubsets(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode + f.bdrm.less.eq.8 + f.waterfront:sqft_living + f.waterfront:bathroom, data = train, method = "backward", nvmax = num.var.full)
+model.backward.full <- regsubsets(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode + f.bdrm.less.eq.8 + f.waterfront:sqft_living + f.waterfront:bathroom + f.bdrm.less.eq.8:bedroom, data = train, method = "backward", nvmax = num.var.full)
 
 df.models.full = data.frame(y = c(summary(model.forward.full)$bic,summary(model.backward.full)$bic,summary(model.forward.full)$adjr2,summary(model.backward.full)$adjr2), x = c(rep(1:num.var.full,4)), model.type = c(rep("Full Forward Model Bic", num.var.full),rep("Full Backward Model Bic", num.var.full),rep("Full Forward Model AdjR2", num.var.full),rep("Full Backward Model AdjR2", num.var.full)))
 
@@ -449,7 +464,7 @@ ggplot(df.models.full[df.models.full$model.type=="Full Backward Model Bic" |df.m
 
 ggplot(df.models.full[df.models.full$model.type=="Full Backward Model AdjR2" |df.models.full$model.type=="Full Forward Model AdjR2",]) + geom_point(aes(x=x,y=y, color=model.type, alpha = 0.4)) + geom_point(data = df.models[df.models$model.type=="Backward Model AdjR2" |df.models$model.type=="Forward Model AdjR2",], aes(x=x,y=y, color=model.type, alpha = 0.4))
 ```
-```
+
 
 
 
@@ -474,7 +489,7 @@ which.min(summary(model.backward.full)$bic)
 
 coef(model.backward.full, id = which.min(summary(model.backward.full)$bic))
 ```
-
+Fix this
 
 ### Part g (4 pts)
 
@@ -490,8 +505,10 @@ names(coef(model.backward.full, id = k))[!names(coef(model.backward.full, id = k
 
 # Variables in forward model not in backword model
 names(coef(model.forward.full, id = k))[!names(coef(model.forward.full, id = k)) %in% names(coef(model.backward.full, id = k))]
+
 ```
- 
+The variables in the backward that are not in the forward model are "f.zipcode98010", "f.zipcode98038", "f.zipcode98055", and "bedroom:f.bdrm.less.eq.81". The variables in the forward model that are not in the backward model are "f.cond3", "f.zipcode98003", "f.zipcode98042", and "bedroom".
+
 ## Question 6 (10 pts) 
 
 ### Part a (6 pts) Checking assumptions
@@ -510,17 +527,37 @@ predict.reg = function(object,newdata,id){
       xvars = names(coefi)                # Pull out the names of the predictors used in the ith model
       mat[,xvars]%*%coefi               # Make predictions using matrix multiplication
 }
+p.prices <-predict.reg(object=model.backward.full,newdata=train,id=as.numeric(which.min(summary(model.backward.full)$bic)))
 
+r.prices<-train$price-p.prices
+
+plot(x=p.prices,y=r.prices)
+abline(a=0,b=0, lty= 2, col="grey")
+qqnorm(y = r.prices)
+qqline(y = r.prices)
+hist(r.prices, breaks = 60, freq = F)
+r.prices.seq = seq(from = min(r.prices), to = max(r.prices), length = length(r.prices))
+lines(y = dnorm(r.prices.seq, mean=mean(r.prices), sd = sd(r.prices)), x = r.prices.seq)
 ```
-
+For a linear model, we assume that the errors are independent, and that the errors are normally distributed with a constand standard deviation. The plot of the residuals suggests that there is a non-constant standard deviation, which would indicate there is a violation of our assumptions. The qq-plot and histogram reaffirm this observation, as we do not observe a straight line with a slope of 1 in the qq-plot and we can see that the distribution of the residuals is especially concentrated in the middle in the histogram.
 
 
 ### Part b (4 pts)
 
 Estimate the mean squared errors for your champion model with the in-time and out-of-time test sets.  Is the MSE estimated with the out-of-time test set bigger or smaller than the MSE estimated with the in-time test set?  Is this result expected? 
 
+```{r}
+p.intime <-predict.reg(object=model.backward.full,newdata=test1,id=as.numeric(which.min(summary(model.backward.full)$bic)))
 
+p.outtime <-predict.reg(object=model.backward.full,newdata=test2,id=as.numeric(which.min(summary(model.backward.full)$bic)))
 
+mse.intime <- mean(p.intime^2)
+
+mse.outtime <- mean(p.outtime^2)
+
+mse.intime/mse.outtime
+```
+The out of time test has a smaller mean squared error than the in time test. This is not expected, for you would expect that the data sampled during the same time as the training set would work better in the model than the data sampled after.
 
 # Model interpretation
 
@@ -541,15 +578,16 @@ Coefficients:
 ```
 			
 (i) **TRUE or FALSE** The model above gives different y-intercepts (for predicting the house price) for houses with and without a view to a waterfront.  
-	
+
+True
 			
 (ii) **TRUE or FALSE** The model above gives different slopes depending on if the house has a view to a waterfront or not.  
-
+True
 
 (iii) **TRUE or FALSE** Using the model shown above to predict the `price` of a 1000 sqft house that has a view to a waterfront we calculate the estimated price this way:  
 
 Predicted price = $-16206.9-267588 + 264.4  + 348.6 \times 1000$.
 
-
+False
 
 
