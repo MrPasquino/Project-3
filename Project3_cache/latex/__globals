@@ -6,15 +6,15 @@ unnamed-chunk-5	boxplot	house	price	zipcode
 unnamed-chunk-6	summary	lm	price	factor	zipcode	house
 unnamed-chunk-7	p.v.zip	summary	lm	price	factor	zipcode	house	coefficients	sum	length	max	sort.p.zip	sort
 unnamed-chunk-8	log.price	log	house	price	log.grade	grade	summary	lm
-unnamed-chunk-9	trans.grade	house	grade	summary	lm	log.price	log.grade	coefficients	plot	sort	unique	prices.grade	c	max
+unnamed-chunk-9	trans.grade	house	grade	summary	lm	log.price	log.grade	coefficients	plot	sort	unique	prices.grade	c	max	abline	price
 unnamed-chunk-10	mod.variables	data.frame	house	price	sqft_living	sqft_basement	grade	bedroom	bathroom	date	as.factor	waterfront	floor	condition	as.numeric	yr_renovated	bedrooms	zipcode	trans.grade
 unnamed-chunk-11	date.format	format	as.Date	mod.variables	date	length	head	dim
 unnamed-chunk-12	test2	mod.variables	date.format	%in%	names	c	dim
 unnamed-chunk-13	tmp	mod.variables	date.format	%in%	names	c	s	dim	set.seed	permu	sample	train	round	test1
-unnamed-chunk-14	model.length	length	lm	price	.	f.waterfront	f.floor	f.cond	f.renov	f.zipcode	trans.grade	f.bdrm.less.eq.8	train	coef	library	model.forward	regsubsets	model.backward	df.models	data.frame	c	summary	bic	adjr2	rep	ggplot	model.type	geom_point	aes	x	y
+unnamed-chunk-14	model.length	length	lm	price	.	f.waterfront	f.floor	f.cond	f.renov	f.zipcode	trans.grade	f.bdrm.less.eq.8	train	coef	library	model.forward	regsubsets	model.backward	df.models	data.frame	c	summary	bic	adjr2	rep	ggplot	model.type	geom_point	aes	x	y	labs	xlab	ylab	scale_color_discrete
 unnamed-chunk-15	coef	model.forward	model.backward
-unnamed-chunk-16	num.var.full	length	lm	price	.	f.waterfront	f.floor	f.cond	f.renov	f.zipcode	f.bdrm.less.eq.8	sqft_living	bathroom	bedroom	train	coef	model.forward.full	regsubsets	model.backward.full	df.models.full	data.frame	c	summary	bic	adjr2	rep	ggplot	model.type	geom_point	aes	x	y	df.models
+unnamed-chunk-16	num.var.full	length	lm	price	.	f.waterfront	f.floor	f.cond	f.renov	f.zipcode	f.bdrm.less.eq.8	sqft_living	bathroom	bedroom	train	coef	model.forward.full	regsubsets	model.backward.full	df.models.full	data.frame	c	summary	bic	adjr2	rep	ggplot	model.type	geom_point	aes	x	y	df.models	labs	xlab	ylab	scale_color_discrete
 unnamed-chunk-17	min	summary	model.backward.full	bic	model.forward.full	which.min	coef
 unnamed-chunk-18	k	as.numeric	which.min	summary	model.backward.full	bic	names	coef	%in%	model.forward.full
 unnamed-chunk-19	predict.reg	form	as.formula	object	call	mat	model.matrix	newdata	coefi	coef	id	xvars	names	%*%	p.prices	model.backward.full	train	as.numeric	which.min	summary	bic	r.prices	price	plot	abline	qqnorm	qqline	hist	F	r.prices.seq	seq	min	max	length	lines	dnorm	mean	sd
-unnamed-chunk-20	p.intime	predict.reg	model.backward.full	test1	as.numeric	which.min	summary	bic	p.outtime	test2	mse.intime	mean	mse.outtime
+unnamed-chunk-20	p.intime	predict.reg	model.backward.full	test1	as.numeric	which.min	summary	bic	p.outtime	test2	mse.intime	mean	price	mse.outtime

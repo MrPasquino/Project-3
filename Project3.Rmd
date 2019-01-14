@@ -620,7 +620,7 @@ hist(r.prices, breaks = 60, freq = F)
 r.prices.seq = seq(from = min(r.prices), to = max(r.prices), length = length(r.prices))
 lines(y = dnorm(r.prices.seq, mean=mean(r.prices), sd = sd(r.prices)), x = r.prices.seq)
 ```
-For a linear model, we assume that the errors are independent, and that the errors are normally distributed with a constand standard deviation. The plot of the residuals suggests that there is a non-constant standard deviation, which would indicate there is a violation of our assumptions. The qq-plot and histogram reaffirm this observation, as we do not observe a straight line with a slope of 1 in the qq-plot and we can see that the distribution of the residuals is especially concentrated in the middle in the histogram.
+For a linear model, we assume that the errors are independent, and that the errors are normally distributed with a constand standard deviation. The plot of the residuals suggests that there is a non-constant standard deviation, which would indicate there is a violation of our assumptions. The qq-plot and histogram reaffirm this observation, as we do not observe a straight line with a slope of 1 in the qq-plot and we can see that the distribution of the residuals is not normal, with a greater concentration of residuals around the mean than in a normal distribution.
 
 
 ### Part b (4 pts)
@@ -628,16 +628,20 @@ For a linear model, we assume that the errors are independent, and that the erro
 Estimate the mean squared errors for your champion model with the in-time and out-of-time test sets.  Is the MSE estimated with the out-of-time test set bigger or smaller than the MSE estimated with the in-time test set?  Is this result expected? 
 
 ```{r}
+# Create Vector of Predicted Prices for In-Time Test
 p.intime <-predict.reg(object=model.backward.full,newdata=test1,id=as.numeric(which.min(summary(model.backward.full)$bic)))
 
+# Create Vector of Predicted Prices for Out-of-Time Test
 p.outtime <-predict.reg(object=model.backward.full,newdata=test2,id=as.numeric(which.min(summary(model.backward.full)$bic)))
 
-mse.intime <- mean((p.intime-test1$price)^2)
+# Calculate MSE 
+mse.intime <- mean((test1$price-p.intime)^2)
 
-mse.outtime <- mean((p.outtime-test2$price)^2)
+mse.outtime <- mean((test2$price-p.outtime)^2)
 
+# Take Ratio Between MSEs
 mse.intime/mse.outtime
-```
+ ```
 The MSE estimated with the out of time test is bigger than the MSE estimated with the in-time test. This result is expected, for data sampled from the same time frame as the training set should have similar prices as a function of their attributes compared to data sampled from another time frame.
 
 # Model interpretation
