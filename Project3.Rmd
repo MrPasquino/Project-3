@@ -107,7 +107,8 @@ We will use the dataset `subset_kc_house_data.csv` and the definitions for the v
 Read the dataset `subset_kc_house_data.csv` into `R` and name it `house`. `house` should have 21613 rows and 15 columns.
 ```{r}
 #load in dataset as `house`
-house<-read.csv("C:/Users/Stuart/Desktop/Sophomore Year/SML 201/Project 3/subset_kc_house_data.csv")
+house<-read.csv(
+  "C:/Users/Stuart/Desktop/Sophomore Year/SML 201/Project 3/subset_kc_house_data.csv")
 
 # Check dimensions
 dim(house)
@@ -126,7 +127,7 @@ Use `ggpairs()` in the `GGally` package and make matrices of scatterplots to inv
 
 Group `sqft_living`, `sqft_lot`, `sqft_above` and `sqft_basement` in the same plot to see if any of these variables are correlated.  In general, it is good to have x-variables that are highly correlated (i.e., with correlation close to -1 or 1) among themselves in your model?  Explain why yes or why no.
 
-```{r}
+```{r message = F, warning= F}
 # Check sqare footage of living area of 30+ bedroom house
 house[house$bedrooms>30,]$sqft_living
 
@@ -137,21 +138,46 @@ house = house[-which(house$bedrooms==0 & house$bathrooms==0|house$bedrooms>30),]
 library(ggplot2)
 library(GGally)
 
-ggpairs(data=house[,c('price','bedrooms','bathrooms','sqft_living', 'sqft_lot','sqft_above', 'sqft_basement')], title = 'Comparison Graph 1', aes(colour = as.factor(house$waterfront), alpha = 0.4)) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+ggpairs(
+  data=house[,c('price','bedrooms','bathrooms','sqft_living', 'sqft_lot','sqft_above', 'sqft_basement')],
+  title = 'Comparison Graph 1', 
+  aes(colour = as.factor(house$waterfront), alpha = 0.4)) +
+  theme(axis.text.x = element_text(angle= 90, hjust= 1))
 
-ggpairs(data=house[,c('price','bedrooms','bathrooms','sqft_living','floors', 'waterfront','condition')], title = 'Comparison Graph 2', aes(colour = as.factor(house$waterfront), alpha = 0.4)) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+ggpairs(
+  data=house[,c('price','bedrooms','bathrooms','sqft_living','floors', 'waterfront','condition')], 
+  title = 'Comparison Graph 2', 
+  aes(colour = as.factor(house$waterfront), alpha = 0.4)) + 
+  theme(axis.text.x = element_text(angle= 90, hjust= 1))
 
-ggpairs(data=house[,c('price','bedrooms','bathrooms','sqft_living','grade','yr_built','yr_renovated')], title = 'Comparison Graph 3', aes(colour = as.factor(house$waterfront), alpha = 0.4)) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+ggpairs(
+  data=house[,c('price','bedrooms','bathrooms','sqft_living','grade','yr_built','yr_renovated')], title = 'Comparison Graph 3', 
+  aes(colour = as.factor(house$waterfront), alpha = 0.4)) + 
+  theme(axis.text.x = element_text(angle= 90, hjust= 1))
 
-ggpairs(data=house[,c('price','sqft_lot','sqft_above', 'sqft_basement','floors', 'waterfront','condition')], title = 'Comparison Graph 4', aes(colour = as.factor(house$waterfront), alpha = 0.4)) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+ggpairs(
+  data=house[,c('price','sqft_lot','sqft_above', 'sqft_basement','floors', 'waterfront','condition')], 
+  title = 'Comparison Graph 4', 
+  aes(colour = as.factor(house$waterfront), alpha = 0.4)) + 
+  theme(axis.text.x = element_text(angle= 90, hjust= 1))
 
-ggpairs(data=house[,c('price','sqft_lot','sqft_above', 'sqft_basement','grade','yr_built','yr_renovated')], title = 'Comparison Graph 5', aes(colour = as.factor(house$waterfront), alpha = 0.4)) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+ggpairs(
+  data=house[,c('price','sqft_lot','sqft_above', 'sqft_basement','grade','yr_built','yr_renovated')], 
+  title = 'Comparison Graph 5', 
+  aes(colour = as.factor(house$waterfront), alpha = 0.4)) + 
+  theme(axis.text.x = element_text(angle= 90, hjust= 1))
 
-ggpairs(data=house[,c('price','floors', 'waterfront','condition','grade','yr_built','yr_renovated')], title = 'Comparison Graph 6', aes(colour = as.factor(house$waterfront), alpha = 0.4)) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+ggpairs(
+  data=house[,c('price','floors', 'waterfront','condition','grade','yr_built','yr_renovated')], 
+  title = 'Comparison Graph 6', aes(colour = as.factor(house$waterfront), alpha = 0.4)) +
+  theme(axis.text.x = element_text(angle= 90, hjust= 1))
 
 
 
-ggpairs(data=house[,c("sqft_living", "sqft_lot","sqft_above", "sqft_basement")],title = "Comparisons of Sqft Variables") + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+ggpairs(
+  data=house[,c("sqft_living", "sqft_lot","sqft_above", "sqft_basement")],
+  title = "Comparisons of Sqft Variables") + 
+  theme(axis.text.x = element_text(angle= 90, hjust= 1))
 ```
 In the plot of `Sqft Variables`, `sqft_living` and `sqft_above` are highly correlated with an R-squared value of 0.877. In general, it is not good to have two x-variables that are highly correlated in the model for that might lead to explanatory redundancy.
 
@@ -182,7 +208,10 @@ prices.grade<-tapply(X=house$price,INDEX=house$grade, FUN=mean)
 prices.bedrooms<-tapply(X=house$price,INDEX=house$bedrooms, FUN=mean)
 
 # Create Plot of Grade
-plot(x=as.numeric(names(prices.grade)),y=prices.grade, main='Grade vs. Average House Price', xlab = 'Grade', ylab = 'Average House Price', xlim=c(0,max(as.numeric(names(prices.grade)))))
+plot(x=as.numeric(names(prices.grade)),y=prices.grade, main='Grade vs. Average House Price',
+     xlab = 'Grade', ylab = 'Average House Price',
+     xlim=c(0,1.1*max(as.numeric(names(prices.grade)))),
+     ylim=c(0,1.1*max(prices.grade)))
 
 # Set Axis Ticks
 axis(side =1,at = c(0:max(as.numeric(names(prices.grade)))))
@@ -209,7 +238,7 @@ Make side by side boxplots to compare the values in `price` by zip code.  Based 
 # Create boxplots
 boxplot(data=house, price~zipcode, las = 2, cex.axis=0.5, xlab='Zipcode', ylab='Price',main='Boxplots of Price by Zipcode')
 ```
-Yes, it is good to include the dummy variables for some zip codes for `price` seems to have different distributions for different zipcodes.
+Yes, it is good to include the dummy variables for some zip codes because those zip codes seperate the values of `price` well.
 
 ### Part b (8 pts; 1 for each answer, 3 for each interpretation) 
 
@@ -222,7 +251,7 @@ summary(lm(price~factor(zipcode), data = house))
 
 What is the estimate for the y-intercept of the model? Interpret the meaning of the y-intercept.  What is the coefficient estimate for the dummy variable for zip code 98004? interpret this number too.
 
-The estimate of the y-intercept of the model is 281195. The y-intercept merely represents the average price of homes that are in the zipcode that does not have a dummy variable associated with it (This happens to be the zipcode with the lowest number in the datset, 98001). The coefficient estimate for the dummy variable for zipcode 98004 is 1074732. This number is how much the average price of homes in the zipcode 98004 is greater than the estimate of the y-intercept.
+The estimate of the y-intercept of the model is 281195. The y-intercept merely represents the average price of homes that are in the zipcode that does not have a dummy variable associated with it (This happens to be the zipcode with the lowest number in the dataset, 98001). The coefficient estimate for the dummy variable for zipcode 98004 is 1074732. This number is how much the average price of homes in the zipcode 98004 is greater than the estimate of the y-intercept.
 
 ### Part c (4 pts)
 
@@ -258,9 +287,10 @@ max(p.v.zip[p.v.zip<(0.05/length(p.v.zip))])
 # FDR
 sort.p.zip<-sort(p.v.zip)
 length(sort.p.zip[sort.p.zip<=((1:length(sort.p.zip)/length(sort.p.zip)))*0.05])
+# P-value cutoff of FDR
 max(sort.p.zip[sort.p.zip<=((1:length(sort.p.zip)/length(sort.p.zip)))*0.05])
 ```
-For the Bonferroni Correction Factor, 53 p-values are now significant, with a maximum p-value cutoff of 0.01134761. For the False Discovery Rate, 55 p-values are significant with a new p-value cutoff of 0.01134761. 
+For the Bonferroni Correction Factor, 53 p-values are now significant, with a maximum p-value cutoff of 0.000465191. For the False Discovery Rate, 55 p-values are significant with a new p-value cutoff of 0.01134761. 
 
 
 # Transforming some of the variables and creating additional ones
@@ -289,8 +319,10 @@ log(price) = b \times log(grade)
 Find out what the best value for $b$ should be according to the data; this value should minimize $(log(price_i) - b \times log(grade_i))^2$ for the data points on average.
 
 ```{r}
+# Take logs of price vector and grade vector
 log.price <- log(house$price)
 log.grade <- log(house$grade)
+# Create linear model without an intercept
 summary(lm(log.price~log.grade-1))
 ```
 The best value for `b` should be 6.4238
@@ -301,11 +333,15 @@ Use the value that you found for $b$ in part a and create the variable `trans.gr
 
 Make the scatterplot that you made for the average house prices v.s. the unique values in `grade` in question 2.d again, except that now replace the unique values of `grade` with that of `trans.grade`.  Verify that the scatterplot now shows a more linear pattern.
 ```{r}
+# Create `trans.grade`
 trans.grade = house$grade^summary(lm(log.price~log.grade-1))$coefficients[1]
 
 # Create Plot of Grade
 plot(x=sort(unique(trans.grade)),y=prices.grade, main='Transformed Grade vs. Average House Price', xlab = 'Transformed Grade', ylab = 'Average House Price', xlim=c(0,max(trans.grade)))
+# Add linear regression to verify linearity
+abline(a=lm(house$price~trans.grade)$coefficients[1],b=lm(house$price~trans.grade)$coefficients[2])
 ```
+The scatterplot now shows a more linear pattern with the transformed grade.
 
 ### Part c (3 pts) Creating new variables for the model
 
@@ -433,7 +469,7 @@ Looking at the plots of the Bic and Adjusted R-squared values of the forward and
 Print out the coefficient estimates for the best model with 7 predictors for each algorithm; is `f.waterfront1` included in both models?
 
 ```{r}
-coef(model.foward, id = 7)
+coef(model.forward, id = 7)
 coef(model.backward, id = 7)
 ```
 Yes, `f.waterfront1` is included in both models.
@@ -551,13 +587,13 @@ p.intime <-predict.reg(object=model.backward.full,newdata=test1,id=as.numeric(wh
 
 p.outtime <-predict.reg(object=model.backward.full,newdata=test2,id=as.numeric(which.min(summary(model.backward.full)$bic)))
 
-mse.intime <- mean(p.intime^2)
+mse.intime <- mean((p.intime-test1$price)^2)
 
-mse.outtime <- mean(p.outtime^2)
+mse.outtime <- mean((p.outtime-test2$price)^2)
 
 mse.intime/mse.outtime
 ```
-The out of time test has a smaller mean squared error than the in time test. This is not expected, for you would expect that the data sampled during the same time as the training set would work better in the model than the data sampled after.
+The MSE estimated with the out of time test is bigger than the MSE estimated with the in-time test. This result is expected, for data sampled from the same time frame as the training set should have similar prices as a function of their attributes compared to data sampled from another time frame.
 
 # Model interpretation
 
