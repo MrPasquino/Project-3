@@ -418,7 +418,7 @@ Looking at the plots of the Bic and Adjusted R-squared values of the forward and
 Print out the coefficient estimates for the best model with 7 predictors for each algorithm; is `f.waterfront1` included in both models?
 
 ```{r}
-coef(model.forward, id = 7)
+coef(model.foward, id = 7)
 coef(model.backward, id = 7)
 ```
 Yes, `f.waterfront1` is included in both models.
