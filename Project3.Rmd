@@ -610,13 +610,19 @@ predict.reg = function(object,newdata,id){
 }
 p.prices <-predict.reg(object=model.backward.full,newdata=train,id=as.numeric(which.min(summary(model.backward.full)$bic)))
 
+# Create Residuals
 r.prices<-train$price-p.prices
 
-plot(x=p.prices,y=r.prices)
+# Plot Residuals
+plot(x=p.prices,y=r.prices, main = "Residual Plot for Prices", xlab = "Predicted Prices", ylab = "Residuals of Prices")
 abline(a=0,b=0, lty= 2, col="grey")
-qqnorm(y = r.prices)
+
+# Plot QQ Plot
+qqnorm(y = r.prices, main = "Normal QQ Plot of Price Residuals", ylab= 'Price Residual Quantiles')
 qqline(y = r.prices)
-hist(r.prices, breaks = 60, freq = F)
+
+# Plot Histogram of Residuals
+hist(r.prices, breaks = 60, freq = F, main = "Histogram of Price Residuals", xlab = "Price Residuals")
 r.prices.seq = seq(from = min(r.prices), to = max(r.prices), length = length(r.prices))
 lines(y = dnorm(r.prices.seq, mean=mean(r.prices), sd = sd(r.prices)), x = r.prices.seq)
 ```
