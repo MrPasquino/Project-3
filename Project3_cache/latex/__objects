@@ -1,20 +1,9 @@
 unnamed-chunk-1	house
-unnamed-chunk-2	house
+unnamed-chunk-2	house	.Random.seed
 unnamed-chunk-3	
 unnamed-chunk-4	prices.bedrooms	prices.grade
 unnamed-chunk-5	
 unnamed-chunk-6	
-unnamed-chunk-7	p.v.zip	sort.p.zip
-unnamed-chunk-8	log.grade	log.price
-unnamed-chunk-9	trans.grade
-unnamed-chunk-10	mod.variables
-unnamed-chunk-11	date.format
-unnamed-chunk-12	test2
-unnamed-chunk-13	permu	s	test1	tmp	train
-unnamed-chunk-14	df.models	model.backward	model.forward	model.length
-unnamed-chunk-15	
-unnamed-chunk-16	df.models.full	model.backward.full	model.forward.full	num.var.full
-unnamed-chunk-17	
-unnamed-chunk-18	k
-unnamed-chunk-19	predict.reg
-fig1	predict.reg
+unnamed-chunk-7	
+unnamed-chunk-8	
+unnamed-chunk-9	predict.reg
