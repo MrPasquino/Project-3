@@ -107,7 +107,8 @@ We will use the dataset `subset_kc_house_data.csv` and the definitions for the v
 Read the dataset `subset_kc_house_data.csv` into `R` and name it `house`. `house` should have 21613 rows and 15 columns.
 ```{r}
 #load in dataset as `house`
-house<-read.csv("C:/Users/Stuart/Desktop/Sophomore Year/SML 201/Project 3/subset_kc_house_data.csv")
+house<-read.csv(
+  "C:/Users/Stuart/Desktop/Sophomore Year/SML 201/Project 3/subset_kc_house_data.csv")
 
 # Check dimensions
 dim(house)
@@ -126,7 +127,7 @@ Use `ggpairs()` in the `GGally` package and make matrices of scatterplots to inv
 
 Group `sqft_living`, `sqft_lot`, `sqft_above` and `sqft_basement` in the same plot to see if any of these variables are correlated.  In general, it is good to have x-variables that are highly correlated (i.e., with correlation close to -1 or 1) among themselves in your model?  Explain why yes or why no.
 
-```{r}
+```{r message = F, warning= F}
 # Check sqare footage of living area of 30+ bedroom house
 house[house$bedrooms>30,]$sqft_living
 
@@ -137,21 +138,46 @@ house = house[-which(house$bedrooms==0 & house$bathrooms==0|house$bedrooms>30),]
 library(ggplot2)
 library(GGally)
 
-ggpairs(data=house[,c('price','bedrooms','bathrooms','sqft_living', 'sqft_lot','sqft_above', 'sqft_basement')], title = 'Comparison Graph 1', aes(colour = as.factor(house$waterfront), alpha = 0.4)) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+ggpairs(
+  data=house[,c('price','bedrooms','bathrooms','sqft_living', 'sqft_lot','sqft_above', 'sqft_basement')],
+  title = 'Comparison Graph 1', 
+  aes(colour = as.factor(house$waterfront), alpha = 0.4)) +
+  theme(axis.text.x = element_text(angle= 90, hjust= 1))
 
-ggpairs(data=house[,c('price','bedrooms','bathrooms','sqft_living','floors', 'waterfront','condition')], title = 'Comparison Graph 2', aes(colour = as.factor(house$waterfront), alpha = 0.4)) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+ggpairs(
+  data=house[,c('price','bedrooms','bathrooms','sqft_living','floors', 'waterfront','condition')], 
+  title = 'Comparison Graph 2', 
+  aes(colour = as.factor(house$waterfront), alpha = 0.4)) + 
+  theme(axis.text.x = element_text(angle= 90, hjust= 1))
 
-ggpairs(data=house[,c('price','bedrooms','bathrooms','sqft_living','grade','yr_built','yr_renovated')], title = 'Comparison Graph 3', aes(colour = as.factor(house$waterfront), alpha = 0.4)) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+ggpairs(
+  data=house[,c('price','bedrooms','bathrooms','sqft_living','grade','yr_built','yr_renovated')], title = 'Comparison Graph 3', 
+  aes(colour = as.factor(house$waterfront), alpha = 0.4)) + 
+  theme(axis.text.x = element_text(angle= 90, hjust= 1))
 
-ggpairs(data=house[,c('price','sqft_lot','sqft_above', 'sqft_basement','floors', 'waterfront','condition')], title = 'Comparison Graph 4', aes(colour = as.factor(house$waterfront), alpha = 0.4)) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+ggpairs(
+  data=house[,c('price','sqft_lot','sqft_above', 'sqft_basement','floors', 'waterfront','condition')], 
+  title = 'Comparison Graph 4', 
+  aes(colour = as.factor(house$waterfront), alpha = 0.4)) + 
+  theme(axis.text.x = element_text(angle= 90, hjust= 1))
 
-ggpairs(data=house[,c('price','sqft_lot','sqft_above', 'sqft_basement','grade','yr_built','yr_renovated')], title = 'Comparison Graph 5', aes(colour = as.factor(house$waterfront), alpha = 0.4)) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+ggpairs(
+  data=house[,c('price','sqft_lot','sqft_above', 'sqft_basement','grade','yr_built','yr_renovated')], 
+  title = 'Comparison Graph 5', 
+  aes(colour = as.factor(house$waterfront), alpha = 0.4)) + 
+  theme(axis.text.x = element_text(angle= 90, hjust= 1))
 
-ggpairs(data=house[,c('price','floors', 'waterfront','condition','grade','yr_built','yr_renovated')], title = 'Comparison Graph 6', aes(colour = as.factor(house$waterfront), alpha = 0.4)) + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+ggpairs(
+  data=house[,c('price','floors', 'waterfront','condition','grade','yr_built','yr_renovated')], 
+  title = 'Comparison Graph 6', aes(colour = as.factor(house$waterfront), alpha = 0.4)) +
+  theme(axis.text.x = element_text(angle= 90, hjust= 1))
 
 
-
-ggpairs(data=house[,c("sqft_living", "sqft_lot","sqft_above", "sqft_basement")],title = "Comparisons of Sqft Variables") + theme(axis.text.x = element_text(angle= 90, hjust= 1))
+ggpairs(
+  data=house[,c("sqft_living", "sqft_lot","sqft_above", "sqft_basement")], 
+  aes(colour = as.factor(house$waterfront), alpha = 0.4), 
+  title = 'Comparisons of Sqft Variables') + 
+  theme(axis.text.x = element_text(angle= 90, hjust= 1))
 ```
 In the plot of `Sqft Variables`, `sqft_living` and `sqft_above` are highly correlated with an R-squared value of 0.877. In general, it is not good to have two x-variables that are highly correlated in the model for that might lead to explanatory redundancy.
 
@@ -182,7 +208,10 @@ prices.grade<-tapply(X=house$price,INDEX=house$grade, FUN=mean)
 prices.bedrooms<-tapply(X=house$price,INDEX=house$bedrooms, FUN=mean)
 
 # Create Plot of Grade
-plot(x=as.numeric(names(prices.grade)),y=prices.grade, main='Grade vs. Average House Price', xlab = 'Grade', ylab = 'Average House Price', xlim=c(0,max(as.numeric(names(prices.grade)))))
+plot(x=as.numeric(names(prices.grade)),y=prices.grade, main='Grade vs. Average House Price',
+     xlab = 'Grade', ylab = 'Average House Price',
+     xlim=c(0,1.1*max(as.numeric(names(prices.grade)))),
+     ylim=c(0,1.1*max(prices.grade)))
 
 # Set Axis Ticks
 axis(side =1,at = c(0:max(as.numeric(names(prices.grade)))))
@@ -209,7 +238,7 @@ Make side by side boxplots to compare the values in `price` by zip code.  Based 
 # Create boxplots
 boxplot(data=house, price~zipcode, las = 2, cex.axis=0.5, xlab='Zipcode', ylab='Price',main='Boxplots of Price by Zipcode')
 ```
-Yes, it is good to include the dummy variables for some zip codes for `price` seems to have different distributions for different zipcodes.
+Yes, it is good to include the dummy variables for some zip codes because those zip codes seperate the values of `price` well.
 
 ### Part b (8 pts; 1 for each answer, 3 for each interpretation) 
 
@@ -222,7 +251,7 @@ summary(lm(price~factor(zipcode), data = house))
 
 What is the estimate for the y-intercept of the model? Interpret the meaning of the y-intercept.  What is the coefficient estimate for the dummy variable for zip code 98004? interpret this number too.
 
-The estimate of the y-intercept of the model is 281195. The y-intercept merely represents the average price of homes that are in the zipcode that does not have a dummy variable associated with it (This happens to be the zipcode with the lowest number in the datset, 98001). The coefficient estimate for the dummy variable for zipcode 98004 is 1074732. This number is how much the average price of homes in the zipcode 98004 is greater than the estimate of the y-intercept.
+The estimate of the y-intercept of the model is 281195. The y-intercept merely represents the average price of homes that are in the zipcode that does not have a dummy variable associated with it (This happens to be the zipcode with the lowest number in the dataset, 98001). The coefficient estimate for the dummy variable for zipcode 98004 is 1074732. This number is how much the average price of homes in the zipcode 98004 is greater than the estimate of the y-intercept.
 
 ### Part c (4 pts)
 
@@ -258,9 +287,10 @@ max(p.v.zip[p.v.zip<(0.05/length(p.v.zip))])
 # FDR
 sort.p.zip<-sort(p.v.zip)
 length(sort.p.zip[sort.p.zip<=((1:length(sort.p.zip)/length(sort.p.zip)))*0.05])
+# P-value cutoff of FDR
 max(sort.p.zip[sort.p.zip<=((1:length(sort.p.zip)/length(sort.p.zip)))*0.05])
 ```
-For the Bonferroni Correction Factor, 53 p-values are now significant, with a maximum p-value cutoff of 0.01134761. For the False Discovery Rate, 55 p-values are significant with a new p-value cutoff of 0.01134761. 
+For the Bonferroni Correction Factor, 53 p-values are now significant, with a maximum p-value cutoff of 0.000465191. For the False Discovery Rate, 55 p-values are significant with a new p-value cutoff of 0.01134761. 
 
 
 # Transforming some of the variables and creating additional ones
@@ -289,8 +319,10 @@ log(price) = b \times log(grade)
 Find out what the best value for $b$ should be according to the data; this value should minimize $(log(price_i) - b \times log(grade_i))^2$ for the data points on average.
 
 ```{r}
+# Take logs of price vector and grade vector
 log.price <- log(house$price)
 log.grade <- log(house$grade)
+# Create linear model without an intercept
 summary(lm(log.price~log.grade-1))
 ```
 The best value for `b` should be 6.4238
@@ -301,11 +333,15 @@ Use the value that you found for $b$ in part a and create the variable `trans.gr
 
 Make the scatterplot that you made for the average house prices v.s. the unique values in `grade` in question 2.d again, except that now replace the unique values of `grade` with that of `trans.grade`.  Verify that the scatterplot now shows a more linear pattern.
 ```{r}
+# Create `trans.grade`
 trans.grade = house$grade^summary(lm(log.price~log.grade-1))$coefficients[1]
 
 # Create Plot of Grade
 plot(x=sort(unique(trans.grade)),y=prices.grade, main='Transformed Grade vs. Average House Price', xlab = 'Transformed Grade', ylab = 'Average House Price', xlim=c(0,max(trans.grade)))
+# Add linear regression to verify linearity
+abline(a=lm(house$price~trans.grade)$coefficients[1],b=lm(house$price~trans.grade)$coefficients[2])
 ```
+The scatterplot now shows a more linear pattern with the transformed grade.
 
 ### Part c (3 pts) Creating new variables for the model
 
@@ -410,21 +446,40 @@ In this part please consider only the predictors that already exist in the origi
 Use BIC and Adjusted $R^2$ as the criteria to evaluate the performance of your "best" models. Do backward and forward selection algorithms produce similar (in terms of the values for BIC and Adjusted $R^2$) results in this case?  
 
 ```{r}
+# Calculate number of coefficients in the model besides the intercept
+model.length <- length(lm(price~. + f.waterfront + f.floor + f.cond + f.renov + f.zipcode - trans.grade - f.bdrm.less.eq.8, data = train)$coef)-1
 
-model.length <- length(lm(price~. + f.waterfront + f.floor + f.cond + f.renov + f.zipcode - trans.grade - f.bdrm.less.eq.8, data = train)$coef) -1
-
+# Load `leaps` package
 library("leaps")
 
+# Build Forward Model
 model.forward <- regsubsets(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode - trans.grade - f.bdrm.less.eq.8, data = train, method = "forward", nvmax = model.length)
 
+# Build Backward Model
 model.backward <- regsubsets(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode - trans.grade - f.bdrm.less.eq.8, data = train, method = "backward", nvmax = model.length)
 
-df.models <- data.frame(y = c(summary(model.forward)$bic,summary(model.backward)$bic,summary(model.forward)$adjr2,summary(model.backward)$adjr2), x = c(rep(1:model.length,4)), model.type = c(rep("Forward Model Bic",model.length),rep("Backward Model Bic",model.length),rep("Forward Model AdjR2",model.length),rep("Backward Model AdjR2",model.length)))
+# Build a Dataframe for Easy GGplot Use
+df.models <- data.frame(
+  y = c(summary(model.forward)$bic,summary(model.backward)$bic,summary(model.forward)$adjr2,summary(model.backward)$adjr2), 
+  x = c(rep(1:model.length,4)), 
+  model.type = c(rep("Forward Model Bic",model.length),rep("Backward Model Bic",model.length),rep("Forward Model AdjR2",model.length),rep("Backward Model AdjR2",model.length)))
 
+# GGplot of Bic Performance
+ggplot(df.models[df.models$model.type=="Backward Model Bic" |df.models$model.type=="Forward Model Bic",]) +
+  geom_point(aes(x=x,y=y, color=model.type, alpha = 0.4)) +
+  labs(title = "Bics Scores for Forward and Backwards Models") +
+  xlab(label = "Number of Predictors") +
+  ylab(label = "Bics Score") +
+  scale_color_discrete(name = "Model Type")
+  
 
-ggplot(df.models[df.models$model.type=="Backward Model Bic" |df.models$model.type=="Forward Model Bic",]) + geom_point(aes(x=x,y=y, color=model.type, alpha = 0.4))
-
-ggplot(df.models[df.models$model.type=="Backward Model AdjR2" |df.models$model.type=="Forward Model AdjR2",]) + geom_point(aes(x=x,y=y, color=model.type, alpha = 0.4))
+# GGplot of AdjR2 Performance
+ggplot(df.models[df.models$model.type=="Backward Model AdjR2" |df.models$model.type=="Forward Model AdjR2",]) + 
+  geom_point(aes(x=x,y=y, color=model.type, alpha = 0.4)) +
+  labs(title = "AdjR2 Scores for Forward and Backwards Models") +
+  xlab(label = "Number of Predictors") +
+  ylab(label = "AdjR2 Score") +
+  scale_color_discrete(name = "Model Type")
 ```
 Looking at the plots of the Bic and Adjusted R-squared values of the forward and backward models, there seems to be little difference in terms of either metric between the 'best' models for any given number of predictors.
 
@@ -433,7 +488,9 @@ Looking at the plots of the Bic and Adjusted R-squared values of the forward and
 Print out the coefficient estimates for the best model with 7 predictors for each algorithm; is `f.waterfront1` included in both models?
 
 ```{r}
-coef(model.foward, id = 7)
+# Best Forward Model w/ 7 Predictors
+coef(model.forward, id = 7)
+# Best Backward Model w/ 7 Predictors
 coef(model.backward, id = 7)
 ```
 Yes, `f.waterfront1` is included in both models.
@@ -452,17 +509,36 @@ Pick the results from the better performing algorithm (if both algorithms perfor
 As you can see from the graphs creating the right variables helps to improve your model significantly!  
 
 ```{r}
+# Calculate Model Length of Full Model
 num.var.full <-length(lm(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode + f.bdrm.less.eq.8 + f.waterfront:sqft_living + f.waterfront:bathroom + f.bdrm.less.eq.8:bedroom, data = train)$coef)-1
 
+# Create Forward Model w/ New Variables
 model.forward.full <- regsubsets(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode + f.bdrm.less.eq.8 + f.waterfront:sqft_living + f.waterfront:bathroom + f.bdrm.less.eq.8:bedroom, data = train, method = "forward", nvmax = num.var.full)
 
+# Create Backward Model w/ New Variables
 model.backward.full <- regsubsets(price ~ . + f.waterfront + f.floor + f.cond + f.renov + f.zipcode + f.bdrm.less.eq.8 + f.waterfront:sqft_living + f.waterfront:bathroom + f.bdrm.less.eq.8:bedroom, data = train, method = "backward", nvmax = num.var.full)
 
-df.models.full = data.frame(y = c(summary(model.forward.full)$bic,summary(model.backward.full)$bic,summary(model.forward.full)$adjr2,summary(model.backward.full)$adjr2), x = c(rep(1:num.var.full,4)), model.type = c(rep("Full Forward Model Bic", num.var.full),rep("Full Backward Model Bic", num.var.full),rep("Full Forward Model AdjR2", num.var.full),rep("Full Backward Model AdjR2", num.var.full)))
+# Create Dataframe for Easy GGplot Use
+df.models.full = data.frame(
+  y = c(summary(model.forward.full)$bic,summary(model.backward.full)$bic,summary(model.forward.full)$adjr2,summary(model.backward.full)$adjr2), 
+  x = c(rep(1:num.var.full,4)), 
+  model.type = c(rep("Full Forward Model Bic", num.var.full),rep("Full Backward Model Bic", num.var.full),rep("Full Forward Model AdjR2", num.var.full),rep("Full Backward Model AdjR2", num.var.full)))
 
-ggplot(df.models.full[df.models.full$model.type=="Full Backward Model Bic" |df.models.full$model.type=="Full Forward Model Bic",]) + geom_point(aes(x=x,y=y, color=model.type, alpha = 0.4)) + geom_point(data = df.models[df.models$model.type=="Backward Model Bic" |df.models$model.type=="Forward Model Bic",], aes(x=x,y=y, color=model.type, alpha = 0.4))
+# Plot Bic Scores of All Models
+ggplot(df.models.full[df.models.full$model.type=="Full Backward Model Bic" |df.models.full$model.type=="Full Forward Model Bic",]) +
+  geom_point(aes(x=x,y=y, color=model.type, alpha = 0.4)) +
+  geom_point(data = df.models[df.models$model.type=="Backward Model Bic",], aes(x=x,y=y, color=model.type, alpha = 0.4)) +
+  labs(title = "Bics Scores for Full Models vs. Original Backwards Model") +
+  xlab(label = "Number of Predictors") +
+  ylab(label = "Bics Score") +
+  scale_color_discrete(name = "Model Type")
 
-ggplot(df.models.full[df.models.full$model.type=="Full Backward Model AdjR2" |df.models.full$model.type=="Full Forward Model AdjR2",]) + geom_point(aes(x=x,y=y, color=model.type, alpha = 0.4)) + geom_point(data = df.models[df.models$model.type=="Backward Model AdjR2" |df.models$model.type=="Forward Model AdjR2",], aes(x=x,y=y, color=model.type, alpha = 0.4))
+# Plot AdjR2 Scores of All Models
+ggplot(df.models.full[df.models.full$model.type=="Full Backward Model AdjR2" |df.models.full$model.type=="Full Forward Model AdjR2",]) + geom_point(aes(x=x,y=y, color=model.type, alpha = 0.4)) + geom_point(data = df.models[df.models$model.type=="Backward Model AdjR2",], aes(x=x,y=y, color=model.type, alpha = 0.4))+
+  labs(title = "AdjR2 Scores for Full Models vs. Original Backwards Model") +
+  xlab(label = "Number of Predictors") +
+  ylab(label = "AdjR2 Score") +
+  scale_color_discrete(name = "Model Type")
 ```
 
 
@@ -481,15 +557,20 @@ The purpose of using more advances measures such as BIC and Adjusted R-square is
 
 Propose your champion model and justify your choice.  Print out the coefficient estimates for your model.
 ```{r}
+# Determine Minimum Bic Score of all the Backward Models
 min(summary(model.backward.full)$bic)
 
+
+# Determine Minimum Bic Score of all the Forward Models
 min(summary(model.forward.full)$bic)
 
+# Determine Which Model has the Lowest Bic Score
 which.min(summary(model.backward.full)$bic)
 
+# Print Coefficient Estimates
 coef(model.backward.full, id = which.min(summary(model.backward.full)$bic))
 ```
-Fix this
+I evaluate the best model here on the lowest BIC score alone, for BIC is motivated more by statistical theory than Adjusted R2 (StatLearn 213). Since the lowest BIC score of the backward models is lower than the lowest BIC score of the forward model (-31996.21<-31984.11), I will elect to use this backward model. 
 
 ### Part g (4 pts)
 
@@ -539,7 +620,7 @@ hist(r.prices, breaks = 60, freq = F)
 r.prices.seq = seq(from = min(r.prices), to = max(r.prices), length = length(r.prices))
 lines(y = dnorm(r.prices.seq, mean=mean(r.prices), sd = sd(r.prices)), x = r.prices.seq)
 ```
-For a linear model, we assume that the errors are independent, and that the errors are normally distributed with a constand standard deviation. The plot of the residuals suggests that there is a non-constant standard deviation, which would indicate there is a violation of our assumptions. The qq-plot and histogram reaffirm this observation, as we do not observe a straight line with a slope of 1 in the qq-plot and we can see that the distribution of the residuals is especially concentrated in the middle in the histogram.
+For a linear model, we assume that the errors are independent, and that the errors are normally distributed with a constand standard deviation. The plot of the residuals suggests that there is a non-constant standard deviation, which would indicate there is a violation of our assumptions. The qq-plot and histogram reaffirm this observation, as we do not observe a straight line with a slope of 1 in the qq-plot and we can see that the distribution of the residuals is not normal, with a greater concentration of residuals around the mean than in a normal distribution.
 
 
 ### Part b (4 pts)
@@ -547,17 +628,21 @@ For a linear model, we assume that the errors are independent, and that the erro
 Estimate the mean squared errors for your champion model with the in-time and out-of-time test sets.  Is the MSE estimated with the out-of-time test set bigger or smaller than the MSE estimated with the in-time test set?  Is this result expected? 
 
 ```{r}
+# Create Vector of Predicted Prices for In-Time Test
 p.intime <-predict.reg(object=model.backward.full,newdata=test1,id=as.numeric(which.min(summary(model.backward.full)$bic)))
 
+# Create Vector of Predicted Prices for Out-of-Time Test
 p.outtime <-predict.reg(object=model.backward.full,newdata=test2,id=as.numeric(which.min(summary(model.backward.full)$bic)))
 
-mse.intime <- mean(p.intime^2)
+# Calculate MSE 
+mse.intime <- mean((test1$price-p.intime)^2)
 
-mse.outtime <- mean(p.outtime^2)
+mse.outtime <- mean((test2$price-p.outtime)^2)
 
+# Take Ratio Between MSEs
 mse.intime/mse.outtime
-```
-The out of time test has a smaller mean squared error than the in time test. This is not expected, for you would expect that the data sampled during the same time as the training set would work better in the model than the data sampled after.
+ ```
+The MSE estimated with the out of time test is bigger than the MSE estimated with the in-time test. This result is expected, for data sampled from the same time frame as the training set should have similar prices as a function of their attributes compared to data sampled from another time frame.
 
 # Model interpretation
 
